@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>My Octopress Blog</title>
-  <meta name="author" content="Your Name">
+  <title>Tony.Mo</title>
+  <meta name="author" content="Tony.Mo">
 
   
-  <meta name="description" content=" Blog Archives Recent Posts ">
+  <meta name="description" content="Cordova提供的功能能够满足一般应用，但是对于复杂的应用或者对性能要求比较严格的应用来说，并不是很理想的。所以就需要在某些场景下自己写代码来弥补这些不足，Cordova也提供了Plugin功能。Cordova本身访问Native接口都是通过Plugin的方式提供的，可以参考官方Plugin代码 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +21,7 @@
   <link rel="canonical" href="http://tony-mo.github.io/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <link href="/atom.xml" rel="alternate" title="Tony.Mo" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
@@ -36,9 +36,7 @@
 
 <body   >
   <header role="banner"><hgroup>
-  <h1><a href="/">My Octopress Blog</a></h1>
-  
-    <h2>A blogging framework for hackers.</h2>
+  <h1><a href="/">Tony.Mo</a></h1>
   
 </hgroup>
 
@@ -66,6 +64,878 @@
       <div class="blog-index">
   
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/06/08/cordova-plugin/">iOS平台编写Cordova插件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-06-08T15:20:20+08:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:20 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><blockquote><p>Cordova提供的功能能够满足一般应用，但是对于复杂的应用或者对性能要求比较严格的应用来说，并不是很理想的。所以就需要在某些场景下自己写代码来弥补这些不足，Cordova也提供了Plugin功能。Cordova本身访问Native接口都是通过Plugin的方式提供的，可以参考官方Plugin代码，而且GitHub上也存在不少开源的Cordova Plugin，所以这些都是最好的教程。</p>
+
+<p>Plugin的分类大概有两种：</p>
+
+<p>JavaScript-only Plugin：不需要写Native代码，不依赖平台的共通的JS代码</p>
+
+<p>Native Plugin：弥补Cordova提供的功能以外的Native调用，依赖各个平台写不同的Native代码</p></blockquote>
+
+<p>引言出自<a href="http://rensanning.iteye.com/blog/2029362">Fish Where The Fish Are</a></p>
+
+<p>文章这里只介绍Native Plugin在iOS平台下的编写。日后或许再添加JavaScript-only Plugin以及安卓平台下的插件编写:)</p>
+
+<hr />
+
+<h3>如何在iOS平台下编写Cordova插件</h3>
+
+<p>(文章末尾有提供安卓平台下编写Cordova插件连接)</p>
+
+<p><em>由于文章篇幅有点长，所以建议大家可以参考插件的文件目录结构以及各文件内容，边看边拷贝文件内容，快速编写一个插件demo出来，首先有个大概的了解。毕竟纸上得来终觉浅，看完了不写，相当于没看。在2.各文件内容以及作用里面，会详细介绍配置文件以及各元素的作用。</em></p>
+
+<h4>1.<a name="file_structure">插件的文件目录结</a></h4>
+
+<p>在桌面或者你认为适合放插件的文件夹下，新建文件夹。新建的文件夹的名称是该插件的id，格式为:com.xxxxxxxx.xxx。</p>
+
+<p>比如，我在桌面新建文件夹，命名为:com.technologystudios.logout</p>
+
+<p><img src="http://f.cl.ly/items/1Z3a1n1V2n1n3F1v0y0n/plugin_name.png" alt="file_name" /></p>
+
+<p>在新建名称为com.technologystudios.logout的文件夹后，依次新建以下的文件(com.technologystudios.logout不必再新建，只需新建README.md，fetch.json，package.json，plugin.xml，src和www文件夹以及下级的文件，其中package.json,plugin.xml,src,www为必须的文件)</p>
+
+<p>新建后的文件目录结构(这只是个人新建插件文件目录结构的习惯，并非标准。)</p>
+
+<pre><code>com.technologystudios.logout
+├── README.md
+├── fetch.json
+├── package.json
+├── plugin.xml
+├── src
+│   └── ios
+│       ├── CDVLogoutPlugin.h
+│       └── CDVLogoutPlugin.m
+└── www
+    └── logoutplugin.js
+</code></pre>
+
+<h4>2.各文件内容以及作用</h4>
+
+<h5>README.md文件</h5>
+
+<p>作为帮助文件的存在，内容描述的是插件如何使用以及定义返回的参数格式等。</p>
+
+<pre><code>Logout Plugin
+==============
+
+Non-Cross-platform LogoutPlugin 
+
+Note:Just for LogoutPlugin
+
+
+## Using the plugin ##
+
+LogoutPlugin
+    使用方法:
+    var logoutPlugin = cordova.require("com.technologystudios.logout.logoutplugin")
+    logoutPlugin.executeLogout    
+    {
+    "type":"Logout"
+    }
+
+    返回的参数格式:
+    {
+        "code":0,
+        "data":{},
+        "message":"登出成功!",
+        "success":"1"
+    }
+## Licence ##
+
+The PHOENIX License
+
+Copyright (c) 2015 PHOENIX Tony Mo
+</code></pre>
+
+<h5>fetch.json文件</h5>
+
+<p>fetch.json文件，在Cordova项目中，会出现在不同的文件夹。对于插件里面的fetch.json文件，是需要手动配置插件的信息。而对于位置在:项目名称/plugins/fetch.json的fetch.json文件则不需要手动配置，在通过Cordova CLI安装插件后，会自动生成该插件的信息。</p>
+
+<p>例子:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'> 
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'> <span class="nt">&quot;com.technologystudios.logout&quot;</span><span class="p">:</span>
+</span><span class='line'> <span class="p">{</span>
+</span><span class='line'>  <span class="nt">&quot;source&quot;</span><span class="p">:</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>          <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;non-registry&quot;</span><span class="p">,</span>
+</span><span class='line'>          <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;com.technologystudios.logout&quot;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>该文件描述的是插件资源的类型以及插件id。</p>
+
+<p>&ldquo;type"的值有registry，git。</p>
+
+<p>&ldquo;registry&rdquo;:表示插件在ng-cordova已经注册的插件
+&ldquo;git&rdquo;:表示通过git url来进行安装(register类型也可以通过git url来安装，但是fetch.json文件的type值为"registry")</p>
+
+<p>上面的"type":&ldquo;non-registry"是
+"com.technologystudios.logout"是插件的id，"type"描述的为该插件是否上传到在Cordova插件库并成功注册.</p>
+
+<h5>package.json文件</h5>
+
+<blockquote><p>每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种模块，以及项目的配置信息（比如名称、版本、许可证等元数据）。npm install 命令根据这个配置文件，自动下载所需的模块，也就是配置项目所需的运行和开发环境。</p></blockquote>
+
+<p> 引言出自<a href="http://javascript.ruanyifeng.com/nodejs/packagejson.html">阮一峰博客</a></p>
+
+<blockquote><p>npm 是 Node.js 的模块依赖管理工具。作为开发者使用的工具，主要解决开发 Node.js 时会遇到的问题。如同 RubyGems 对于 Ruby 开发者和 Maven 对于 Java 开发者的重要性，npm 对与 Node.js 的开发者和社区的重要性不言而喻。本文包括五点：package.json 、npm 的配置、npm install 命令、npm link 命令和其它 npm 命令。</p></blockquote>
+
+<p> InfoQ的文章:<a href="http://www.infoq.com/cn/articles/msh-using-npm-manage-node.js-dependence">如何使用NPM来管理你的Node.js依赖</a></p>
+
+<p> 插件package.json文件例子:</p>
+
+<p>  <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'>  <span class="p">{</span>
+</span><span class='line'>   <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span>
+</span><span class='line'>   <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;com.technologystudios.logout&quot;</span><span class="p">,</span>
+</span><span class='line'>   <span class="nt">&quot;cordova_name&quot;</span><span class="p">:</span> <span class="s2">&quot;LogoutPlugin&quot;</span><span class="p">,</span>
+</span><span class='line'>   <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;LogoutPlugin.&quot;</span><span class="p">,</span>
+</span><span class='line'>   <span class="nt">&quot;license&quot;</span><span class="p">:</span> <span class="s2">&quot;PHOENIX&quot;</span><span class="p">,</span>
+</span><span class='line'>   <span class="nt">&quot;platforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+</span><span class='line'>       <span class="s2">&quot;ios&quot;</span>
+</span><span class='line'>   <span class="p">],</span>
+</span><span class='line'>   <span class="nt">&quot;engines&quot;</span><span class="p">:</span> <span class="p">[</span>
+</span><span class='line'>       <span class="p">{</span>
+</span><span class='line'>           <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;cordova&quot;</span><span class="p">,</span>
+</span><span class='line'>           <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;=3.0.0&quot;</span>
+</span><span class='line'>       <span class="p">}</span>
+</span><span class='line'>   <span class="p">]</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>&ldquo;version&rdquo;:必须字段,为该插件的版本信息。</p>
+
+<p>&ldquo;name&rdquo;:必须字段,这个名字可能在require()方法中被调用，所以应该尽可能短。但是很多插件在name这个字段，赋值都是插件id，所以现在我也赋值为插件id。</p>
+
+<p>&ldquo;cordova_name&rdquo;:在下面的package文档中，找不到该字段，后来想起来，该字段是从另一个插件的package.json文件拷贝过来的，作用尚且是告诉我们，这个插件的名字。</p>
+
+<p>若插件需要加上其他字段,请点击
+<a href="https://github.com/ericdum/mujiang.info/issues/6">官网文档</a>
+<a href="https://github.com/ericdum/mujiang.info/issues/6">中文文档1</a>
+<a href="http://javascript.ruanyifeng.com/nodejs/packagejson.html">中文文档2</a>
+<a href="http://www.mujiang.info/translation/npmjs/files/package.json.html">中文文档3</a></p>
+
+<h5>plugin.xml文件</h5>
+
+<p>plugin.xml 是插件的配置文件。
+还是先给出例子:
+ <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;plugin</span> <span class="na">xmlns=</span><span class="s">&quot;<a href="http://www.phonegap.com/ns/plugins/1.0&amp;quot;">http://www.phonegap.com/ns/plugins/1.0&amp;quot;</a></span>
+</span><span class='line'>   <span class="na">xmlns:android=</span><span class="s">&quot;<a href="http://schemas.android.com/apk/res/android&amp;quot;">http://schemas.android.com/apk/res/android&amp;quot;</a></span>
+</span><span class='line'>   <span class="na">id=</span><span class="s">&quot;com.technologystudios.logout&quot;</span>
+</span><span class='line'>   <span class="na">version=</span><span class="s">&quot;0.0.1&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nt">&lt;name&gt;</span>LogoutPlugin<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nt">&lt;description&gt;</span>LogoutPlugin.<span class="nt">&lt;/description&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nt">&lt;engines&gt;</span>
+</span><span class='line'>       <span class="nt">&lt;engine</span> <span class="na">name=</span><span class="s">&quot;cordova&quot;</span> <span class="na">version=</span><span class="s">&quot;&gt;=3.0.0&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;/engines&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nt">&lt;license&gt;</span>PHOENIX<span class="nt">&lt;/license&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="c">&lt;!&ndash; ios &ndash;&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;platform</span> <span class="na">name=</span><span class="s">&quot;ios&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;config-file</span> <span class="na">target=</span><span class="s">&quot;config.xml&quot;</span> <span class="na">parent=</span><span class="s">&quot;/*&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;feature</span> <span class="na">name=</span><span class="s">&quot;LogoutPlugin&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>               <span class="nt">&lt;param</span> <span class="na">name=</span><span class="s">&quot;ios-package&quot;</span> <span class="na">value=</span><span class="s">&quot;CDVLogoutPlugin&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>           <span class="nt">&lt;/feature&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/config-file&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nt">&lt;header-file</span> <span class="na">src=</span><span class="s">&quot;src/ios/CDVLogoutPlugin.h&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;source-file</span> <span class="na">src=</span><span class="s">&quot;src/ios/CDVLogoutPlugin.m&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;js-module</span> <span class="na">src=</span><span class="s">&quot;www/logoutplugin.js&quot;</span> <span class="na">name=</span><span class="s">&quot;logoutplugin&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;clobbers</span> <span class="na">target=</span><span class="s">&quot;plugins.logoutplugin&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/js-module&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;/platform&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<ul>
+<li>plugin:依次为命名空间、ID、版本，值得我们注意的是属性id。id的值为插件的id值:&ldquo;com.technologystudios.logout"。</li>
+<li>name:插件的名称</li>
+<li>description:描述信息</li>
+<li>engines:Cordova版本</li>
+<li>license:授权</li>
+<li>platform:支持的平台,iOS平台的话,属性name的值为iOS。</li>
+<li>config-file:封装feature 注入特定平台(在这里平台为iOS)的config.xml文件
+
+<ul>
+<li>feature:这个feature的名字</li>
+<li><p>param:iOS平台，name的值就是"ios-package"；安卓平台，name的值就是"android-package"
+使用CLI添加插件后(后面会介绍CLI添加插件的方法)，在项目文件下的platforms/ios/项目名称/config.xml文件，会注入</p>
+
+<pre><code>&lt;feature name="LogoutPlugin"&gt;
+    &lt;param name="ios-package" value="CDVLogoutPlugin" /&gt;
+&lt;/feature&gt;
+</code></pre>
+
+<p>而又值得我们注意的是,feature元素的属性name的值"LogoutPlugin"，需要与logoutplugin.js文件的</p>
+
+<pre><code>cordova.exec(successCallback, errorCallback, 'LogoutPlugin','executeLogout', [options]);
+</code></pre>
+
+<p>这个方法的第三个参数的值一致。(在logoutplugin.js文件会详细说明)
+而param元素属性value=&ldquo;CDVLogoutPlugin&rdquo;,&ldquo;CDVLogoutPlugin"这个值是需要作为与src/ios目录下的文件名和类名一致(在CDVLogoutPlugin会详细说明)。</p></li>
+</ul>
+</li>
+<li>header-file，source-file:在iOS平台下，指向头文件和实现文件的位置</li>
+<li>js-module:js文件地址，指向www/logoutplugin.js。</li>
+<li>clobbers:这个元素目前暂时不是很理解其作用,target的值笔者一般赋值"plugins.xxx",xxx的值就是js-module属性name的值一致。</li>
+<li>framework:插件依赖的framework。例子: <code>&lt;framework src="libz.dylib" /&gt;</code></li>
+</ul>
+
+
+<p><a href="https://cordova.apache.org/docs/en/4.0.0/plugin_ref_spec.md.html">官网plugin.xml文档</a>是官网对plugin.xml字段的详细解释。</p>
+
+<h5>src/ios/CDVLogoutPlugin文件</h5>
+
+<p>该目录下的文件名以及类名需要与plugin.xml文件里面的param的value属性值一致，因为"CDVLogoutPlugin"表示名字为"LogoutPlugin"的feature，映射到名为"CDVLogoutPlugin"的服务，该服务的名称为"CDVLogoutPlugin"的类，在logoutplugin.js文件中，会使用到这个映射的关系。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;feature</span> <span class="na">name=</span><span class="s">&quot;LogoutPlugin&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;param</span> <span class="na">name=</span><span class="s">&quot;ios-package&quot;</span> <span class="na">value=</span><span class="s">&quot;CDVLogoutPlugin&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/feature&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>CDVLogoutPlugin.h文件的代码例子:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="cp">#import &lt;Foundation/Foundation.h&gt;</span>
+</span><span class='line'><span class="cp">#import &lt;Cordova/CDVPlugin.h&gt;</span>
+</span><span class='line'><span class="k">@interface</span> <span class="nc">CDVLogoutPlugin</span> : <span class="nc">CDVPlugin</span>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">executeLogout:</span><span class="p">(</span><span class="n">CDVInvokedUrlCommand</span><span class="o">*</span><span class="p">)</span><span class="nv">command</span><span class="p">;</span>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>CDVLogoutPlugin.m文件的代码例子:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="cp">#import &quot;CDVLogoutPlugin.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@implementation</span> <span class="nc">CDVLogoutPlugin</span>
+</span><span class='line'><span class="k">@synthesize</span> <span class="n">callbackId</span> <span class="o">=</span> <span class="n">_callbackId</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#pragma mark - public interface</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">executeLogout:</span><span class="p">(</span><span class="n">CDVInvokedUrlCommand</span><span class="o">*</span><span class="p">)</span><span class="nv">command</span>
+</span><span class='line'><span class="p">{</span>  
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;CDVLogoutPlugin&#39;s function:executeLogout is called&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="bp">NSDictionary</span> <span class="o">*</span> <span class="n">argums</span> <span class="o">=</span> <span class="n">command</span><span class="p">.</span><span class="n">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">argums</span> <span class="o">!=</span><span class="nb">nil</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="n">CDVPluginResult</span><span class="o">*</span> <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDVPluginResult</span> <span class="nl">resultWithStatus</span><span class="p">:</span> <span class="n">CDVCommandStatus_OK</span> <span class="nl">messageAsDictionary</span><span class="p">:</span><span class="l">@{</span><span class="s">@&quot;code&quot;</span><span class="o">:</span><span class="l">@(</span><span class="mi">0</span><span class="l">)</span><span class="p">,</span><span class="s">@&quot;data&quot;</span><span class="o">:</span><span class="l">@{}</span><span class="p">,</span><span class="s">@&quot;message&quot;</span><span class="o">:</span><span class="s">@&quot;登出成功!&quot;</span><span class="p">,</span><span class="s">@&quot;success&quot;</span><span class="o">:</span><span class="s">@&quot;1&quot;</span><span class="l">}</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">commandDelegate</span> <span class="nl">sendPluginResult</span><span class="p">:</span><span class="n">result</span> <span class="nl">callbackId</span><span class="p">:</span><span class="n">command</span><span class="p">.</span><span class="n">callbackId</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="c1">//return no type error</span>
+</span><span class='line'>        <span class="n">CDVPluginResult</span><span class="o">*</span> <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDVPluginResult</span> <span class="nl">resultWithStatus</span><span class="p">:</span> <span class="n">CDVCommandStatus_ERROR</span> <span class="nl">messageAsString</span><span class="p">:</span><span class="s">@&quot;no such service&quot;</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">commandDelegate</span> <span class="nl">sendPluginResult</span><span class="p">:</span><span class="n">result</span> <span class="nl">callbackId</span><span class="p">:</span><span class="n">command</span><span class="p">.</span><span class="n">callbackId</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>CDVLogoutPlugin类需要继承CDVPlugin类，CDVLogoutPlugin的方法executeLogout:名称，需要与logoutplugin.js的cordova.exec方法第四个参数一致。executeLogout:方法默认的参数类型是CDVInvokedUrlCommand。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">cordova</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">successCallback</span><span class="p">,</span> <span class="nx">errorCallback</span><span class="p">,</span> <span class="s1">&#39;LogoutPlugin&#39;</span><span class="p">,</span> <span class="s1">&#39;executeLogout&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nx">options</span><span class="p">]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在CDVLogoutPlugin.m文件中，executeLogout:方法，command.arguments[0]表示的是cordova.exe函数中的最后一个参数[options]，参数的格式可以定义在README.md文件中。该例子的参数格式为{&ldquo;type&rdquo;:&ldquo;Logout&rdquo;}，在javascript传递一个对象到native的插件。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">commandDelegate</span> <span class="nl">sendPluginResult</span><span class="p">:</span><span class="n">result</span> <span class="nl">callbackId</span><span class="p">:</span><span class="n">command</span><span class="p">.</span><span class="n">callbackId</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这行代码是返回调用插件的结果给javascript回调函数。Status为CDVCommandStatus_OK的，回调successCallback函数，Status为CDVCommandStatus_ERROR回调errorCallback函数。</p>
+
+<h5>www/logoutplugin.js文件</h5>
+
+<p>还是直接上例子</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>   
+</span><span class='line'><span class="kd">var</span> <span class="nx">exec</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;cordova/exec&#39;</span><span class="p">),</span>
+</span><span class='line'><span class="nx">cordova</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;cordova&#39;</span><span class="p">);</span>    
+</span><span class='line'><span class="kd">var</span> <span class="nx">LogoutPlugin</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">LogoutPlugin</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">executeLogout</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">successCallback</span><span class="p">,</span> <span class="nx">errorCallback</span><span class="p">,</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>   <span class="k">if</span> <span class="p">(</span><span class="nx">errorCallback</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>       <span class="nx">errorCallback</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>       <span class="p">}</span>
+</span><span class='line'>   <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">errorCallback</span> <span class="o">!=</span> <span class="s2">&quot;function&quot;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;LogoutPlugin.executeLogout: failure: failure parameter not a function&quot;</span><span class="p">);</span>
+</span><span class='line'>       <span class="k">return</span>
+</span><span class='line'>   <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">successCallback</span> <span class="o">!=</span> <span class="s2">&quot;function&quot;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;LogoutPlugin.executeLogout: success callback parameter must be a function&quot;</span><span class="p">);</span>
+</span><span class='line'>       <span class="k">return</span>
+</span><span class='line'>   <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nx">cordova</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">successCallback</span><span class="p">,</span> <span class="nx">errorCallback</span><span class="p">,</span> <span class="s1">&#39;LogoutPlugin&#39;</span><span class="p">,</span> <span class="s1">&#39;executeLogout&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nx">options</span><span class="p">]);</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">logoutplugin</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LogoutPlugin</span><span class="p">();</span>
+</span><span class='line'><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">logoutplugin</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>代码第2，3行，是加载cordova，exec对象；</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">exec</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;cordova/exec&#39;</span><span class="p">),</span>
+</span><span class='line'><span class="nx">cordova</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;cordova&#39;</span><span class="p">);</span>    
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>第4行，new一个LogoutPlugin对象。</p>
+
+<p>第7行是定义LogoutPlugin对象的executeLogout方法。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">LogoutPlugin</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">executeLogout</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">successCallback</span><span class="p">,</span> <span class="nx">errorCallback</span><span class="p">,</span><span class="nx">options</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>executeLogout方法需要定义两个callback的函数，这是javascript与native对接的回调函数，通过native的</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">CDVPluginResult</span><span class="o">*</span> <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDVPluginResult</span> <span class="nl">resultWithStatus</span><span class="p">:</span> <span class="n">CDVCommandStatus_OK</span> <span class="nl">messageAsDictionary</span><span class="p">:</span><span class="l">@{</span><span class="s">@&quot;code&quot;</span><span class="o">:</span><span class="l">@(</span><span class="mi">0</span><span class="l">)</span><span class="p">,</span><span class="s">@&quot;data&quot;</span><span class="o">:</span><span class="l">@{}</span><span class="p">,</span><span class="s">@&quot;message&quot;</span><span class="o">:</span><span class="s">@&quot;登出成功!&quot;</span><span class="p">,</span><span class="s">@&quot;success&quot;</span><span class="o">:</span><span class="s">@&quot;1&quot;</span><span class="l">}</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">commandDelegate</span> <span class="nl">sendPluginResult</span><span class="p">:</span><span class="n">result</span> <span class="nl">callbackId</span><span class="p">:</span><span class="n">command</span><span class="p">.</span><span class="n">callbackId</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>CDVPluginResult对象的属性status(CDVCommandStatus_OK/CDVCommandStatus_ERROR)来决定调用对应的成功(successCallback)/失败函数(errorCallback)，而options为javascript到native的参数，参数类型为数组。</p>
+
+<p>第23行</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">cordova</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">successCallback</span><span class="p">,</span> <span class="nx">errorCallback</span><span class="p">,</span> <span class="s1">&#39;LogoutPlugin&#39;</span><span class="p">,</span> <span class="s1">&#39;executeLogout&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nx">options</span><span class="p">]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这行代码是executeLogout方法映射到插件类的作用。</p>
+
+<ul>
+<li><p>第一第二个参数（successCallback/errorCallback）是根据native返回的成功/失败来回调对应的callback函数。</p></li>
+<li><p>第三个参数（"LogoutPlugin"），为插件的服务名称，必须与plugin.xml的</p></li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;feature</span> <span class="na">name=</span><span class="s">&quot;LogoutPlugin&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;param</span> <span class="na">name=</span><span class="s">&quot;ios-package&quot;</span> <span class="na">value=</span><span class="s">&quot;CDVLogoutPlugin&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/feature&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>feature元素name属性值"LogoutPlugin"保持一致，"LogoutPlugin" 通过元素param设置其映射的Objective-C的类的名字为"CDVLogoutPlugin"。这就是为什么src/ios下的文件名称以及类名需要与</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;param</span> <span class="na">name=</span><span class="s">&quot;ios-package&quot;</span> <span class="na">value=</span><span class="s">&quot;CDVLogoutPlugin&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>元素param的属性value的值"CDVLogoutPlugin"相一致。</p>
+
+<ul>
+<li>第四个参数（'executeLogout'），为"LogoutPlugin" 映射到Objective-C的"CDVLogoutPlugin"类的方法名字</li>
+<li>第五个参数（options），是javascript调用native的插件传递的参数，参数格式为数组，通过被调用的本地方法executeLogout:传入的对象(CDVInvokedUrlCommand*)command，
+command.arguments[0]来获取。</li>
+</ul>
+
+
+<p>大家可以尝试快速新建插件，<a href="#file_structure">目录结构</a>以及各文件内容可以直接拷贝粘贴，先写一个雏形插件。假设大家都写好了这个登出的插件。</p>
+
+<h4>3.Cordova CLI安装插件</h4>
+
+<p>这里没有使用pluginman来对Cordova插件的管理。若需要使用pluginman来管理插件的话，请点击这里<a href="https://cordova.apache.org/docs/en/4.0.0/plugin_ref_plugman.md.html">这里</a></p>
+
+<p>假设大家已经搭建好Ionic环境，以及拥有一个Ionic的项目，如果没有，请点击<a href="http://ionicframework.com/getting-started/">这里</a>来进行环境的搭建以及新建项目，这里不再赘言。</p>
+
+<ul>
+<li>打开CLI，进入项目的目录</li>
+<li><p>输入指令 <code>cordova plugin -h</code> 会出现帮助信息，其中我们关注的是</p>
+
+<pre><code>  add &lt;pluginid&gt;|&lt;directory&gt;|&lt;giturl&gt; [...] ..... add specified plugins
+
+                                              pluginid will be matched in --searchpath / registry
+
+                                              directory is a directory containing a plugin
+
+                                              giturl is a git repo containing a plugin
+</code></pre>
+
+<ul>
+<li>pluginid:根据插件的id来搜索插件并安装，该插件需要在Cordova插件库注册成功的。</li>
+<li>directory:通过插件所在的本地路径来安装(LogoutPlugin就是通过这种方式来安装)</li>
+<li><p>giturl:通过url进行插件的安装</p>
+
+<p>这是使用CLI安装插件前的最外层的plugins目录结构(并非/platforms/ios/www/plugins)
+<img src="http://f.cl.ly/items/0i412R2T1K40181f221l/preInstall_plugin.png" alt="preInstall_plgin" /></p>
+
+<p>这是/platforms/ios/www/plugins
+<img src="http://f.cl.ly/items/3e403l0O3U1H1M3D1l39/pre_install_plugin_pl.png" alt="pre_install_plugin_pl" /></p></li>
+</ul>
+</li>
+<li><p>在CLI输入指令 <code>cordova plugin add /Users/Tony/Desktop/plugin/com.technologystudios.logout</code>
+  &ldquo;/Users/Tony/Desktop/plugin/com.technologystudios.logout"是插件的路径，
+  敲下回车键之后，出现
+  <code>Installing "com.technologystudios.logout" for ios</code>信息表示成功安装插件</p></li>
+<li><p>安装成功后，最外层的plugins目录和/platforms/ios/www/plugins都会多一个刚才add的插件，其中平台里面的plugins是copy最外层的plugins的内容</p>
+
+<p>  <img src="http://f.cl.ly/items/0o0R2v0O3L1a2v0T4130/af_install_plugin.png" alt="af_install_plugin" /></p></li>
+</ul>
+
+
+<h4>4.HTML调用本地插件</h4>
+
+<p> 1.html代码</p>
+
+<p> <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;ion-view</span> <span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;ion-content</span> <span class="na">class=</span><span class="s">&quot;padding&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;button</span>
+</span><span class='line'>      <span class="na">class=</span><span class="s">&quot;button button-block button-balanced&quot;</span>
+</span><span class='line'>      <span class="na">ng-click=</span><span class="s">&quot;logout()&quot;</span>
+</span><span class='line'>      <span class="nt">&gt;</span>
+</span><span class='line'>          登出
+</span><span class='line'>      <span class="nt">&lt;/button&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/ion-content&gt;</span>
+</span><span class='line'><span class="nt">&lt;/ion-view&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>第3-8行代码，描述的是名字为"登出"的按钮，ng-click事件为"logout()&ldquo;。很容易理解。</p>
+
+<p>2.javascript代码</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">&#39;ChatDetailCtrl&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$scope</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">logout</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">newOptions</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>                <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;Logout&quot;</span>
+</span><span class='line'>            <span class="p">};</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">successCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">){</span>
+</span><span class='line'>          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;调用logout插件成功&quot;</span><span class="p">);</span>
+</span><span class='line'>          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">};</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">errorCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">){</span>
+</span><span class='line'>          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;调用logout插件失败&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">};</span>
+</span><span class='line'>  
+</span><span class='line'>     <span class="c1">// 获取 plguin</span>
+</span><span class='line'>     <span class="kd">var</span> <span class="nx">logoutPlugin</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>     <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">cordova</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>         <span class="nx">logoutPlugin</span> <span class="o">=</span> <span class="nx">cordova</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;com.technologystudios.logout.logoutplugin&quot;</span><span class="p">)</span>
+</span><span class='line'>     <span class="p">};</span>
+</span><span class='line'>  
+</span><span class='line'>     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">logoutPlugin</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>         <span class="k">if</span><span class="p">(</span><span class="nx">angular</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">errorCallback</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>             <span class="nx">options</span><span class="p">.</span><span class="nx">errorCallback</span><span class="p">({</span>
+</span><span class='line'>                 <span class="nx">code</span><span class="o">:</span> <span class="s1">&#39;no plguin&#39;</span><span class="p">,</span>
+</span><span class='line'>                 <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;这个功能还没做&#39;</span>
+</span><span class='line'>             <span class="p">});</span>
+</span><span class='line'>         <span class="p">};</span>
+</span><span class='line'>         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>     <span class="p">};</span>
+</span><span class='line'>      <span class="c1">// 尝试调用原生代码</span>
+</span><span class='line'>      <span class="k">try</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="nx">logoutPlugin</span><span class="p">.</span><span class="nx">executeLogout</span><span class="p">(</span><span class="nx">successCallback</span><span class="p">,</span> <span class="nx">errorCallback</span><span class="p">,</span> <span class="nx">newOptions</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">){</span>
+</span><span class='line'>          <span class="k">if</span><span class="p">(</span><span class="nx">angular</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">errorCallback</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>              <span class="nx">options</span><span class="p">.</span><span class="nx">errorCallback</span><span class="p">({</span>
+</span><span class='line'>                  <span class="nx">code</span><span class="o">:</span> <span class="s1">&#39;no plguin&#39;</span><span class="p">,</span>
+</span><span class='line'>                  <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;这个功能还没做&#39;</span>
+</span><span class='line'>              <span class="p">});</span>
+</span><span class='line'>          <span class="p">};</span>
+</span><span class='line'>          <span class="p">};</span>
+</span><span class='line'>   <span class="p">};</span>
+</span><span class='line'>  <span class="p">})</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 第3行代码，是登出按钮的logout()事件的定义。</p>
+
+<p> 第8-13行代码，简单地输入控制台调用本地插件的情况，以及输入返回的参数。</p>
+
+<p> 第5-13行代码，是options参数格式，以及成功回调函数和失败回调函数的定义。</p>
+
+<p> 第18行代码，<code>cordova.require("com.technologystudios.logout.logoutplugin")</code> 加载logoutPlugin对象。
+ Javascript端调用native端的插件，首先需要通过<code>cordova.require("插件id.xxx")</code>来获取得插件对象，其中"xxx"为plugin.xml的元素js-module属性name的值"logoutplugin"。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;js-module</span> <span class="na">src=</span><span class="s">&quot;www/logoutplugin.js&quot;</span> <span class="na">name=</span><span class="s">&quot;logoutplugin&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;clobbers</span> <span class="na">target=</span><span class="s">&quot;plugins.logoutplugin&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/js-module&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>第33行代码，获取logoutPlugin对象后，通过调用executeLogout(successCallback, errorCallback, newOptions)方法(方法的定义，在logoutplugin.js文件)，来调用映射到objective-c的CDVLogoutPlugin类的方法executeLogout:。</p>
+
+<p>3.Objective-C 代码</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="cp">#import &quot;CDVLogoutPlugin.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@implementation</span> <span class="nc">CDVLogoutPlugin</span>
+</span><span class='line'><span class="k">@synthesize</span> <span class="n">callbackId</span> <span class="o">=</span> <span class="n">_callbackId</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#pragma mark - public interface</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">executeLogout:</span><span class="p">(</span><span class="n">CDVInvokedUrlCommand</span><span class="o">*</span><span class="p">)</span><span class="nv">command</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nb">self</span><span class="p">.</span><span class="n">callbackId</span> <span class="o">=</span> <span class="n">command</span><span class="p">.</span><span class="n">callbackId</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;CDVLogoutPlugin&#39;s function:executeLogout is called&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="bp">NSDictionary</span> <span class="o">*</span> <span class="n">argums</span> <span class="o">=</span> <span class="n">command</span><span class="p">.</span><span class="n">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">argums</span> <span class="o">!=</span><span class="nb">nil</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="n">CDVPluginResult</span><span class="o">*</span> <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDVPluginResult</span> <span class="nl">resultWithStatus</span><span class="p">:</span> <span class="n">CDVCommandStatus_OK</span> <span class="nl">messageAsDictionary</span><span class="p">:</span><span class="l">@{</span><span class="s">@&quot;code&quot;</span><span class="o">:</span><span class="l">@(</span><span class="mi">0</span><span class="l">)</span><span class="p">,</span><span class="s">@&quot;data&quot;</span><span class="o">:</span><span class="l">@{}</span><span class="p">,</span><span class="s">@&quot;message&quot;</span><span class="o">:</span><span class="s">@&quot;登出成功!&quot;</span><span class="p">,</span><span class="s">@&quot;success&quot;</span><span class="o">:</span><span class="s">@&quot;1&quot;</span><span class="l">}</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">commandDelegate</span> <span class="nl">sendPluginResult</span><span class="p">:</span><span class="n">result</span> <span class="nl">callbackId</span><span class="p">:</span><span class="n">command</span><span class="p">.</span><span class="n">callbackId</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="c1">//return no type error</span>
+</span><span class='line'>        <span class="n">CDVPluginResult</span><span class="o">*</span> <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDVPluginResult</span> <span class="nl">resultWithStatus</span><span class="p">:</span> <span class="n">CDVCommandStatus_ERROR</span> <span class="nl">messageAsString</span><span class="p">:</span><span class="s">@&quot;no such service&quot;</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">commandDelegate</span> <span class="nl">sendPluginResult</span><span class="p">:</span><span class="n">result</span> <span class="nl">callbackId</span><span class="p">:</span><span class="n">command</span><span class="p">.</span><span class="n">callbackId</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>第12行代码，简单地在控制台输出native的插件被调用的信息。</p>
+
+<p>第18行代码，组装CDVPluginResult类型的result对象，初始化status为CDVCommandStatus_OK，以及返回的参数:<code>@{@"code":@(0),@"data":@{},@"message":@"登出成功!",@"success":@"1"}</code></p>
+
+<h4>5.图片例子</h4>
+
+<p><img src="http://f.cl.ly/items/1a1h3t2y0b1f322r2j3Z/html_UI.png" alt="html_UI" /></p>
+
+<p>点击HTML5页面的"登出"按钮，在xcode控制台会输出信息</p>
+
+<p><code>CDVLogoutPlugin's function:executeLogout is called</code></p>
+
+<p>表示消息成功地传递到native的插件。</p>
+
+<p>然后顺序执行</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">CDVPluginResult</span><span class="o">*</span> <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDVPluginResult</span> <span class="nl">resultWithStatus</span><span class="p">:</span> <span class="n">CDVCommandStatus_ERROR</span> <span class="nl">messageAsString</span><span class="p">:</span><span class="s">@&quot;no such service&quot;</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">commandDelegate</span> <span class="nl">sendPluginResult</span><span class="p">:</span><span class="n">result</span> <span class="nl">callbackId</span><span class="p">:</span><span class="n">command</span><span class="p">.</span><span class="n">callbackId</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>返回调用成功会HTML，在前端的控制台会输入下面的信息：</p>
+
+<p><img src="http://f.cl.ly/items/1e0g344747372H1t3w1c/callback_HTML.png" alt="callback_HTML" /></p>
+
+<p>返回的Object就是在native的插件组装的对象<code>@{@"code":@(0),@"data":@{},@"message":@"登出成功!",@"success":@"1"}</code>。</p>
+
+<h4>6.Cordova更新插件</h4>
+
+<p>一般情况下，被添加的插件会被修改，而且被修改的文件位置在 项目名/platforms/ios/www/plugins/pluginid，这时候被修改的插件是不会自动更新到 项目名/plugins/pluginid的文件。笔者的做法是，每一次修改platform下的插件，都会拷贝一份到最外层的插件文件(项目名/plugins/pluginid的文件)。</p>
+
+<p>那么，被添加的插件如何更新?</p>
+
+<p>很遗憾，目前Cordova的CLI没有提供<code>Cordova plugin update</code>指令来直接更新插件。</p>
+
+<p>笔者解决方案
+这里分两种情况:</p>
+
+<p>1.没有在ng-cordova注册的插件</p>
+
+<p>笔者采用一个曲线救国的方法来更新插件。（该方法针对没有在ng-cordova注册的插件）</p>
+
+<ul>
+<li>保存更新的插件文件，更新package.json，plugin.xml文件的version，拷贝PluginDemoTabs/plugins/com.technologystudios.logout文件夹到桌面或者你认为合适的地方。</li>
+<li><p>进入到项目的路径下，输入指令</p>
+
+<p>  <code>cordova plugin remove com.technologystudios.logout</code></p>
+
+<p>  CLI会输出这些信息</p>
+
+<p>  <code>Uninstalling com.technologystudios.logout from ios
+Removing "com.technologystudios.logout</code></p>
+
+<p>  这个指令的意思是移除plugin id为com.technologystudios.logout的插件。</p>
+
+<p>  成功执行remove puglin之后，PluginDemoTabs/plugins/以及platform</p></li>
+<li></li>
+</ul>
+
+
+<p>2.在ng-cordova注册的插件</p>
+</div>
+  
+  
+
+
+    </article>
+  
   <div class="pagination">
     
     <a href="/blog/archives">Blog Archives</a>
@@ -77,6 +947,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/06/08/cordova-plugin/">iOS平台编写Cordova插件</a>
+      </li>
     
   </ul>
 </section>
@@ -91,7 +965,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2015 - Your Name -
+  Copyright &copy; 2015 - Tony.Mo -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
