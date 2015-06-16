@@ -4,7 +4,7 @@
   <title><![CDATA[Tony.Mo]]></title>
   <link href="http://tony-mo.github.io/atom.xml" rel="self"/>
   <link href="http://tony-mo.github.io/"/>
-  <updated>2015-06-15T23:31:55+08:00</updated>
+  <updated>2015-06-16T18:00:25+08:00</updated>
   <id>http://tony-mo.github.io/</id>
   <author>
     <name><![CDATA[Tony.Mo]]></name>
@@ -12,6 +12,24 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[JSDoc安装问题]]></title>
+    <link href="http://tony-mo.github.io/blog/2015/06/16/jsdoc-install-issue/"/>
+    <updated>2015-06-16T17:46:59+08:00</updated>
+    <id>http://tony-mo.github.io/blog/2015/06/16/jsdoc-install-issue</id>
+    <content type="html"><![CDATA[<h3>JSDoc安装后出现-bash: sudu: command not found</h3>
+
+<p>1.根据JSDoc的github安装教程
+<a href="https://github.com/jsdoc3/jsdoc">Github安装文档</a></p>
+
+<p> 使用CLI指令<code>npm install jsdoc</code>来安装JSDoc后，在命令行输入指令<code>jsdoc -help</code>，CLI提示<code>-bash: sudu: command not found</code>。</p>
+
+<p> 百度谷歌后，发现是安装的指令的问题，使用指令<code>npm install -g jsdoc@"&lt;=3.3.0""</code>，安装后，在CLI输入<code>jsdoc -help</code>能显示jsdoc的帮组信息。</p>
+
+<p> 留一下任务给自己，为什么使用指令<code>npm install -g jsdoc@"&lt;=3.3.0""</code>能够成功使用jsdoc指令?</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[iOS平台编写Cordova插件]]></title>

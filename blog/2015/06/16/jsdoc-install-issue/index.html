@@ -5,13 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog Archive - Tony.Mo</title>
+  <title>JSDoc安装问题 - Tony.Mo</title>
   <meta name="author" content="Tony.Mo">
 
   
-  <meta name="description" content=" Blog Archive 2015 JSDoc安装问题
-Jun 16 2015 iOS平台编写Cordova插件
-Jun 08 2015 Recent Posts JSDoc安装问题 iOS平台编写Cordova插件 ">
+  <meta name="description" content="JSDoc安装后出现-bash: sudu: command not found 1.根据JSDoc的github安装教程
+Github安装文档 使用CLI指令npm install jsdoc来安装JSDoc后，在命令行输入指令jsdoc -help，CLI提示-bash: sudu: &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +19,7 @@ Jun 08 2015 Recent Posts JSDoc安装问题 iOS平台编写Cordova插件 ">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tony-mo.github.io/blog/archives/">
+  <link rel="canonical" href="http://tony-mo.github.io/blog/2015/06/16/jsdoc-install-issue/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Tony.Mo" type="application/atom+xml">
@@ -64,41 +63,73 @@ Jun 08 2015 Recent Posts JSDoc安装问题 iOS平台编写Cordova插件 ">
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Blog Archive</h1>
+    
+      <h1 class="entry-title">JSDoc安装问题</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-06-16T17:46:59+08:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>16</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>5:46 pm</span></time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives">
 
 
+<div class="entry-content"><h3>JSDoc安装后出现-bash: sudu: command not found</h3>
 
-  
-  <h2>2015</h2>
+<p>1.根据JSDoc的github安装教程
+<a href="https://github.com/jsdoc3/jsdoc">Github安装文档</a></p>
 
-<article>
-  
-<h1><a href="/blog/2015/06/16/jsdoc-install-issue/">JSDoc安装问题</a></h1>
-<time datetime="2015-06-16T17:46:59+08:00" pubdate><span class='month'>Jun</span> <span class='day'>16</span> <span class='year'>2015</span></time>
+<p> 使用CLI指令<code>npm install jsdoc</code>来安装JSDoc后，在命令行输入指令<code>jsdoc -help</code>，CLI提示<code>-bash: sudu: command not found</code>。</p>
 
+<p> 百度谷歌后，发现是安装的指令的问题，使用指令<code>npm install -g jsdoc@"&lt;=3.3.0""</code>，安装后，在CLI输入<code>jsdoc -help</code>能显示jsdoc的帮组信息。</p>
 
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2015/06/08/cordova-plugin/">iOS平台编写Cordova插件</a></h1>
-<time datetime="2015-06-08T15:20:20+08:00" pubdate><span class='month'>Jun</span> <span class='day'>08</span> <span class='year'>2015</span></time>
-
-
-</article>
-
+<p> 留一下任务给自己，为什么使用指令<code>npm install -g jsdoc@"&lt;=3.3.0""</code>能够成功使用jsdoc指令?</p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Tony.Mo</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-06-16T17:46:59+08:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>16</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>5:46 pm</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://tony-mo.github.io/blog/2015/06/16/jsdoc-install-issue/" data-via="" data-counturl="http://tony-mo.github.io/blog/2015/06/16/jsdoc-install-issue/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/06/08/cordova-plugin/" title="Previous Post: iOS平台编写Cordova插件">&laquo; iOS平台编写Cordova插件</a>
+      
+      
+    </p>
+  </footer>
 </article>
 
 </div>
