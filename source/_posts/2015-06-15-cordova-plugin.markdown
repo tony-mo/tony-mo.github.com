@@ -36,14 +36,12 @@ categories:
 
 ![file_name](http://f.cl.ly/items/1Z3a1n1V2n1n3F1v0y0n/plugin_name.png)
 
-在新建名称为com.technologystudios.logout的文件夹后，依次新建以下的文件(com.technologystudios.logout不必再新建，只需新建README.md，fetch.json，package.json，plugin.xml，src和www文件夹以及下级的文件，其中package.json,plugin.xml,src,www为必须的文件)
+在新建名称为com.technologystudios.logout的文件夹后，依次新建以下的文件(com.technologystudios.logout不必再新建，只需新建README.md，plugin.xml，src和www文件夹以及下级的文件，其中plugin.xml,src,www为必须的文件)
 
 新建后的文件目录结构(这只是个人新建插件文件目录结构的习惯，并非标准。)
 
 	com.technologystudios.logout
 	├── README.md
-	├── fetch.json
-	├── package.json
 	├── plugin.xml
 	├── src
 	│   └── ios
@@ -88,85 +86,10 @@ categories:
 	
 	Copyright (c) 2015 PHOENIX Tony Mo
 
-#####fetch.json文件
-fetch.json文件，在Cordova项目中，会出现在不同的文件夹。对于插件里面的fetch.json文件，是需要手动配置插件的信息。而对于位置在:项目名称/plugins/fetch.json的fetch.json文件则不需要手动配置，在通过Cordova CLI安装插件后，会自动生成该插件的信息。
-
-
-例子:
-
-{% codeblock lang:json %}	    
-{
- "com.technologystudios.logout": 
- {
-	"source": 
-	{
-   		"type": "non-registry",
-   		"id": "com.technologystudios.logout"
-	}
- }
-}
-{% endcodeblock %}   
-
-该文件描述的是插件资源的类型以及插件id。
-
-"type"的值有registry，git。
-
-"registry":表示插件在ng-cordova已经注册的插件
-"git":表示通过git url来进行安装(register类型也可以通过git url来安装，但是fetch.json文件的type值为"registry")
-
-上面的"type":"non-registry"是
-"com.technologystudios.logout"是插件的id，"type"描述的为该插件是否上传到在Cordova插件库并成功注册.
- 
- 
-#####package.json文件
-
-> 每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种模块，以及项目的配置信息（比如名称、版本、许可证等元数据）。npm install 命令根据这个配置文件，自动下载所需的模块，也就是配置项目所需的运行和开发环境。
- 
- 引言出自[阮一峰博客](http://javascript.ruanyifeng.com/nodejs/packagejson.html)
- 
- > npm 是 Node.js 的模块依赖管理工具。作为开发者使用的工具，主要解决开发 Node.js 时会遇到的问题。如同 RubyGems 对于 Ruby 开发者和 Maven 对于 Java 开发者的重要性，npm 对与 Node.js 的开发者和社区的重要性不言而喻。本文包括五点：package.json 、npm 的配置、npm install 命令、npm link 命令和其它 npm 命令。
- 
- InfoQ的文章:[如何使用NPM来管理你的Node.js依赖](http://www.infoq.com/cn/articles/msh-using-npm-manage-node.js-dependence)
- 
- 
- 插件package.json文件例子:
-
-  {% codeblock lang:json %}
-  {
-   "version": "0.0.1",
-   "name": "com.technologystudios.logout",
-   "cordova_name": "LogoutPlugin",
-   "description": "LogoutPlugin.",
-   "license": "PHOENIX",
-   "platforms": [
-       "ios"
-   ],
-   "engines": [
-       {
-           "name": "cordova",
-           "version": ">=3.0.0"
-       }
-   ]
-  }
-  {% endcodeblock %}
-
-"version":必须字段,为该插件的版本信息。
-
-"name":必须字段,这个名字可能在require()方法中被调用，所以应该尽可能短。但是很多插件在name这个字段，赋值都是插件id，所以现在我也赋值为插件id。
-
-"cordova_name":在下面的package文档中，找不到该字段，后来想起来，该字段是从另一个插件的package.json文件拷贝过来的，作用尚且是告诉我们，这个插件的名字。
-
-若插件需要加上其他字段,请点击
-[官网文档](https://github.com/ericdum/mujiang.info/issues/6)
-[中文文档1](https://github.com/ericdum/mujiang.info/issues/6)
-[中文文档2](http://javascript.ruanyifeng.com/nodejs/packagejson.html)
-[中文文档3](http://www.mujiang.info/translation/npmjs/files/package.json.html)
-
 #####plugin.xml文件
 plugin.xml 是插件的配置文件。
 还是先给出例子:
- {% codeblock lang:xml %}
-<?xml version="1.0" encoding="UTF-8"?>
+{% codeblock lang:xml plugin.xml %}<?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
    xmlns:android="http://schemas.android.com/apk/res/android"
    id="com.technologystudios.logout"
@@ -207,45 +130,81 @@ plugin.xml 是插件的配置文件。
 * engines:Cordova版本 
 * license:授权
 * platform:支持的平台,iOS平台的话,属性name的值为iOS。
-* config-file:封装feature 注入特定平台(在这里平台为iOS)的config.xml文件
-	* feature:这个feature的名字
+* config-file:封装feature元素注入特定平台(在这里平台为iOS)的config.xml文件
+	* feature:属性name为插件的名字
 	* param:iOS平台，name的值就是"ios-package"；安卓平台，name的值就是"android-package"
-	使用CLI添加插件后(后面会介绍CLI添加插件的方法)，在项目文件下的platforms/ios/项目名称/config.xml文件，会注入
-
-		<feature name="LogoutPlugin">
+	使用CLI添加插件后(后面会介绍CLI添加插件的方法)，在项目名称/platforms/ios/项目名称/config.xml文件，会注入
+	{% codeblock lang:xml%}
+	<feature name="LogoutPlugin">
 		    <param name="ios-package" value="CDVLogoutPlugin" />
-		</feature>
-而又值得我们注意的是,feature元素的属性name的值"LogoutPlugin"，需要与logoutplugin.js文件的
+	</feature>{% endcodeblock %}
+而又值得我们注意的是,feature元素的属性name的值"LogoutPlugin"，是插件的服务名称，需要与logoutplugin.js文件的
+	{% codeblock lang:javascript%}cordova.exec(successCallback, errorCallback, 'LogoutPlugin','executeLogout', [options]);{% endcodeblock %}
+		
+      这个方法的第三个参数的值一致，(在logoutplugin.js文件会详细说明)。
+	  而param元素属性value="CDVLogoutPlugin","CDVLogoutPlugin"是native代码的类名，需要作为与src/ios目录下的文件名和类名一致(在CDVLogoutPlugin会详细说明)。
+* header-file，source-file:在iOS平台下，指向iOS原生代码的头文件和实现文件的位置
+* js-module:src指向插件的js文件地址www/logoutplugin.js，属性name的值"logoutplugin"，作为插件id的最后一部分。JS使用`cordova.require`加载logoutPlugin对象的时候，使用到的是插件id + "logoutplugin" ，`cordova.require("com.technologystudios.logout.logoutplugin")`，为什么通过这个指令就能够得到logoutPlugin对象？
 
-		cordova.exec(successCallback, errorCallback, 'LogoutPlugin','executeLogout', [options]);
-	这个方法的第三个参数的值一致。(在logoutplugin.js文件会详细说明)
-	而param元素属性value="CDVLogoutPlugin","CDVLogoutPlugin"这个值是需要作为与src/ios目录下的文件名和类名一致(在CDVLogoutPlugin会详细说明)。
-* header-file，source-file:在iOS平台下，指向头文件和实现文件的位置
-* js-module:js文件地址，指向www/logoutplugin.js。
-* clobbers:这个元素目前暂时不是很理解其作用,target的值笔者一般赋值"plugins.xxx",xxx的值就是js-module属性name的值一致。
+当通过CLI安装插件后，logoutplugin.js被拷贝到：项目名称/platforms/ios/www/plugins/my.plugin.id/www/logoutplugin.js这个目录，同时，插件的id，js文件被拷贝到的目标目录，以及clobbers元素信息，会作为新增的条目被增加到：项目名称/platforms/ios/cordova_plugins.js文件。
+	cordova_plugins.js文件，我对它的理解，是封装插件的信息，通过插件id加载对应的插件js文件，获得插件对象，而不需要调用端关心需要加载哪一个js文件。
+{% codeblock lang:javascript  cordova_plugins.js %}
+cordova.define('cordova/plugin_list', function(require, exports, module) {
+module.exports = [
+    {
+        "file": "plugins/com.technologystudios.logout/www/logoutplugin.js",
+        "id": "com.technologystudios.logout.logoutplugin",
+        "clobbers": [
+            "plugins.logoutplugin"
+        ]
+    }
+];
+module.exports.metadata = 
+// TOP OF METADATA
+{
+    "com.technologystudios.logout": "0.0.1"
+}
+// BOTTOM OF METADATA
+});
+{% endcodeblock %}
+
+cordova.define定义名字为`'cordova/plugin_list'`的模块，改模块向外声明返回的对象类型为数组，该数组对象封装了项目的插件列表。`cordova.require("com.technologystudios.logout.logoutplugin")`，通过获得`'cordova/plugin_list'`模块返回的数组对象，并根据id加载对应的js文件logoutplugin.js。而logoutplugin.js文件定义了`module.exports = logoutplugin;`模块并对外部声明模块返回logoutplugin对象(具体代码内容见logoutplugin.js文件)。所以通过`cordova.require(id)`能获取插件的对象。
+
+<a name="mudule_define">涉及到的mudule.exports以及cordova.define,cordova.require资料</a>
+
+[nodejs中exports与module.exports的区别详细介绍](http://www.jb51.net/article/33269.htm)
+
+[Cordova 3.x 源码分析（3） -- cordova.js模块系统require/define](http://www.ylzx8.cn/web/javascript/953687.html)
+
+* clobbers:官网API给出的解释是"指示`module.exports`作为`window.some.value`被插入到window对象"。目前对该元素没有很深的理解,target的值我一般赋值"plugins.xxx",xxx的值就是与js-module属性name的值一致。有对这个元素理解深刻的同学麻烦指教一下。
+
 * framework:插件依赖的framework。例子: `<framework src="libz.dylib" />`
 
-[官网plugin.xml文档](https://cordova.apache.org/docs/en/4.0.0/plugin_ref_spec.md.html)是官网对plugin.xml字段的详细解释。
+[官网plugin.xml文档](https://cordova.apache.org/docs/en/4.0.0/plugin_ref_spec.md.html)plugin.xml字段的详细解释。
 
 #####src/ios/CDVLogoutPlugin文件
 
-该目录下的文件名以及类名需要与plugin.xml文件里面的param的value属性值一致，因为"CDVLogoutPlugin"表示名字为"LogoutPlugin"的feature，映射到名为"CDVLogoutPlugin"的服务，该服务的名称为"CDVLogoutPlugin"的类，在logoutplugin.js文件中，会使用到这个映射的关系。
-{% codeblock lang:xml %}
-<feature name="LogoutPlugin">
-            <param name="ios-package" value="CDVLogoutPlugin" />
-</feature>
+该目录下的文件名以及类名需要与plugin.xml文件里面的
+{% codeblock lang:xml plugin.xml %}
+<config-file target="config.xml" parent="/*">
+          <feature name="LogoutPlugin">
+               <param name="ios-package" value="CDVLogoutPlugin" />
+           </feature>
+      </config-file>
 {% endcodeblock %}
+param的value属性值一致。"CDVLogoutPlugin"表示插件名字为"LogoutPlugin"的feature，映射到名为"CDVLogoutPlugin"的服务，插件服务的类名称为"CDVLogoutPlugin"，在logoutplugin.js文件中，会使用到这个映射的关系。
 
 CDVLogoutPlugin.h文件的代码例子:
 
-{% codeblock lang:objc %}
+{% codeblock lang:objc CDVLogoutPlugin.h %}
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPlugin.h>
 @interface CDVLogoutPlugin : CDVPlugin 
 - (void)executeLogout:(CDVInvokedUrlCommand*)command;
 @end{% endcodeblock %}
+
 CDVLogoutPlugin.m文件的代码例子:
-{% codeblock lang:objc %}
+{% codeblock lang:objc CDVLogoutPlugin.m%}
 #import "CDVLogoutPlugin.h"
 
 @implementation CDVLogoutPlugin
@@ -290,7 +249,7 @@ cordova.exec(successCallback, errorCallback, 'LogoutPlugin', 'executeLogout', [o
 
 #####www/logoutplugin.js文件
 还是直接上例子
-{% codeblock lang:javascript%}
+{% codeblock lang:javascript logoutplugin.js%}
 	 
 var exec = require('cordova/exec'),
 cordova = require('cordova');	
@@ -334,25 +293,30 @@ cordova = require('cordova');
 LogoutPlugin.prototype.executeLogout = function (successCallback, errorCallback,options)
 {% endcodeblock %}
 
-executeLogout方法需要定义两个callback的函数，这是javascript与native对接的回调函数，通过native的
-
+executeLogout方法接收三个参数，第一第二个参数，函数类型。successCallback函数，调用本地插件成功时回调的函数；errorCallback函数，调用本地插件失败时回调的函数。这是javascript与native对接的回调函数，通过native的
 {% codeblock lang:objc %}
 CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary:@{@"code":@(0),@"data":@{},@"message":@"登出成功!",@"success":@"1"}];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+[self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 {% endcodeblock %}
 
-CDVPluginResult对象的属性status(CDVCommandStatus_OK/CDVCommandStatus_ERROR)来决定调用对应的成功(successCallback)/失败函数(errorCallback)，而options为javascript到native的参数，参数类型为数组。
+CDVPluginResult对象的属性status(CDVCommandStatus_OK/CDVCommandStatus_ERROR)来返回调用对应的成功(successCallback)/失败函数(errorCallback)。
+
+第三个参数，数组类型，为javascript到native的参数。通过
+
+{% codeblock lang:objc%}
+NSDictionary * argums = command.arguments[0];
+{% endcodeblock %}
+获得，其中`command`为`CDVInvokedUrlCommand*`类型。
 
 第23行
 {% codeblock lang:javascript%}
 cordova.exec(successCallback, errorCallback, 'LogoutPlugin', 'executeLogout', [options]);
 {% endcodeblock %}
+执行cordova.exec方法，调用'LogoutPlugin'服务的'executeLogout'方法。本地Objective-C代码会执行CDVLogoutPlugin类的executeLogout:方法。
 
-这行代码是executeLogout方法映射到插件类的作用。
+* 第一第二个参数（successCallback/errorCallback）为外部传递进来的成功/失败回调函数。
 
-* 第一第二个参数（successCallback/errorCallback）是根据native返回的成功/失败来回调对应的callback函数。
-
-* 第三个参数（"LogoutPlugin"），为插件的服务名称，必须与plugin.xml的
+* 第三个参数（"LogoutPlugin"），为插件的服务名称，需要与plugin.xml文件的
 
 {% codeblock lang:xml%}
 <feature name="LogoutPlugin">
@@ -360,15 +324,18 @@ cordova.exec(successCallback, errorCallback, 'LogoutPlugin', 'executeLogout', [o
 </feature>
 {% endcodeblock %}
 
-feature元素name属性值"LogoutPlugin"保持一致，"LogoutPlugin" 通过元素param设置其映射的Objective-C的类的名字为"CDVLogoutPlugin"。这就是为什么src/ios下的文件名称以及类名需要与
-{% codeblock lang:xml%}
-<param name="ios-package" value="CDVLogoutPlugin" />
-{% endcodeblock %}
-元素param的属性value的值"CDVLogoutPlugin"相一致。
+feature元素name属性值"LogoutPlugin"保持一致，"LogoutPlugin" 通过元素param设置其映射的Objective-C的类的名字为"CDVLogoutPlugin"。
 
 * 第四个参数（'executeLogout'），为"LogoutPlugin" 映射到Objective-C的"CDVLogoutPlugin"类的方法名字
 * 第五个参数（options），是javascript调用native的插件传递的参数，参数格式为数组，通过被调用的本地方法executeLogout:传入的对象(CDVInvokedUrlCommand*)command，
 command.arguments[0]来获取。
+
+第27行
+{% codeblock lang:javascript%}
+module.exports = logoutplugin;
+{% endcodeblock %}
+
+创建模块logoutplugin，通过加载logoutplugin.js文件能获取logoutplugin对象。在[plugin.xml](#mudule_define)文件中会详细说明。
 
 大家可以尝试快速新建插件，[目录结构](#file_structure)以及各文件内容可以直接拷贝粘贴，先写一个雏形插件。假设大家都写好了这个登出的插件。
 
@@ -376,20 +343,21 @@ command.arguments[0]来获取。
 
 这里没有使用pluginman来对Cordova插件的管理。若需要使用pluginman来管理插件的话，请点击这里[这里](https://cordova.apache.org/docs/en/4.0.0/plugin_ref_plugman.md.html)
 
-假设大家已经搭建好Ionic环境，以及拥有一个Ionic的项目，如果没有，请点击[这里](http://ionicframework.com/getting-started/)来进行环境的搭建以及新建项目，这里不再赘言。
+假设大家已经搭建好Ionic环境，以及已经新建好Ionic的项目，如果没有，请点击[这里](http://ionicframework.com/getting-started/)来进行环境的搭建以及新建项目，这里不再赘言。
 
 * 打开CLI，进入项目的目录
 * 输入指令 `cordova plugin -h` 会出现帮助信息，其中我们关注的是 
 
 
+
 		add <pluginid>|<directory>|<giturl> [...] ..... add specified plugins
 	
-                                                    pluginid will be matched in --searchpath / registry
+												pluginid will be matched in --searchpath / registry
                                                     
-                                                    directory is a directory containing a plugin
+												directory is a directory containing a plugin
                                                     
-                                                    giturl is a git repo containing a plugin
- 
+												giturl is a git repo containing a plugin
+
   * pluginid:根据插件的id来搜索插件并安装，该插件需要在Cordova插件库注册成功的。
   * directory:通过插件所在的本地路径来安装(LogoutPlugin就是通过这种方式来安装)
   * giturl:通过url进行插件的安装
@@ -413,9 +381,8 @@ command.arguments[0]来获取。
   
 ####4.HTML调用本地插件
  1.html代码
- 
- {% codeblock lang:html%}
-<ion-view >
+{% codeblock lang:html chat-detail.html%}
+ <ion-view >
 	<ion-content class="padding">
 		<button 
 		class="button button-block button-balanced" 
@@ -424,14 +391,13 @@ command.arguments[0]来获取。
   		登出
 		</button>
 	</ion-content>
-</ion-view>
-{% endcodeblock %}
+</ion-view>{% endcodeblock %}
 
 第3-8行代码，描述的是名字为"登出"的按钮，ng-click事件为"logout()"。很容易理解。
 
 2.javascript代码
 
-{% codeblock lang:javascript%}
+{% codeblock lang:javascript controllers.js%}
 .controller('ChatDetailCtrl', function($scope) {
 
 	$scope.logout = function() {
@@ -498,7 +464,7 @@ command.arguments[0]来获取。
 
 3.Objective-C 代码
 
-{% codeblock lang:objc %}
+{% codeblock lang:objc CDVLogoutPlugin.m%}
 #import "CDVLogoutPlugin.h"
 
 @implementation CDVLogoutPlugin
@@ -535,7 +501,7 @@ command.arguments[0]来获取。
 第18行代码，组装CDVPluginResult类型的result对象，初始化status为CDVCommandStatus_OK，以及返回的参数:`@{@"code":@(0),@"data":@{},@"message":@"登出成功!",@"success":@"1"}`
 
 
-####5.图片例子
+####5.例子
 
 ![html_UI](http://f.cl.ly/items/1a1h3t2y0b1f322r2j3Z/html_UI.png)
 
@@ -548,8 +514,8 @@ command.arguments[0]来获取。
 然后顺序执行
 
 {% codeblock lang:objc %}
-CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_ERROR messageAsString:@"no such service"];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDictionary:@{@"code":@(0),@"data":@{},@"message":@"登出成功!",@"success":@"1"}];
+[self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 {% endcodeblock %}
 
 返回调用成功会HTML，在前端的控制台会输入下面的信息：
@@ -560,7 +526,7 @@ CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_ER
 
 ####6.Cordova更新插件
 
-一般情况下，被添加的插件会被修改，而且被修改的文件位置在 项目名/platforms/ios/www/plugins/pluginid，这时候被修改的插件是不会自动更新到 项目名/plugins/pluginid的文件。笔者的做法是，每一次修改platform下的插件，都会拷贝一份到最外层的插件文件(项目名/plugins/pluginid的文件)。
+一般情况下，被添加的插件会被修改，而且被修改的文件位置在:项目名/platforms/ios/www/plugins/pluginid/src/ios/xxxx，或者是项目名/platforms/ios/www/plugins/pluginid/www/xxx.js，被修改的文件是不会自动更新到:项目名/plugins/pluginid的文件。
 
 那么，被添加的插件如何更新?
 
@@ -571,27 +537,44 @@ CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_ER
 
 1.没有在ng-cordova注册的插件
 
-笔者采用一个曲线救国的方法来更新插件。（该方法针对没有在ng-cordova注册的插件）
+笔者采用一个曲线救国的方法来更新插件，当需要修改:项目名/platforms/ios/www/plugins/pluginid下的文件，我会拷贝修改的文件内容到:项目名称/plugins/对应需要被覆盖的文件。
 
-* 保存更新的插件文件，更新package.json，plugin.xml文件的version，拷贝PluginDemoTabs/plugins/com.technologystudios.logout文件夹到桌面或者你认为合适的地方。
-* 进入到项目的路径下，输入指令
+当插件的修改内容达到需要更新版本号的时候，保存更新的插件文件，更新:项目名称/plugins/pluginid/plugin.xml文件的`version="x.x.x"`，拷贝:项目名称/plugins/pluginid文件夹到桌面或者你认为合适的地方。
+
+进入到项目的路径下，输入指令(使用logout插件id作为例子)
 
 	`cordova plugin remove com.technologystudios.logout`
 	
-	CLI会输出这些信息
+CLI会输出这些信息
 	
-	`Uninstalling com.technologystudios.logout from ios
-Removing "com.technologystudios.logout`
+	`Uninstalling com.technologystudios.logout from ios Removing "com.technologystudios.logout`
 
-	这个指令的意思是移除plugin id为com.technologystudios.logout的插件。
-	
-	成功执行remove puglin之后，PluginDemoTabs/plugins/以及platform
-	
-*  
+指令的意思是移除plugin id为com.technologystudios.logout的插件。
+
+成功执行remove puglin之后，项目名称/plugins/以及项目名称/platforms/ios/www/plugins/下的com.technologystudios.logout文件件会被自动删除。
+
+在CLI输入指令
+
+`ionic build ios`
+
+`cordova plugin add /Users/Tony/Desktop/com.technologystudios.logout`
+
+重新安装最新的插件到项目，完成一次插件的更新。
+
+*注意*
+若重新安装后，调用插件，xcode的控制台出现
+
+	2015-06-18 18:57:28.677 PluginDemoTabs[18677:645115] ERROR: Plugin 'LogoutPlugin' not found, or is not a CDVPlugin. Check your plugin mapping in config.xml.
+	2015-06-18 18:57:28.677 PluginDemoTabs[18677:645115] -[CDVCommandQueue executePending] [Line 159] FAILED pluginJSON = ["LogoutPlugin1500224491","LogoutPlugin","executeLogout",[{"type":"Logout"}]]
+
+* 选中使用xcode打开项目，找到CDVLogoutPlugin.m文件，选中，然后在Target Membership，选中项目的target，打钩，然后使用CLI输入指令`ionic build ios`重新编译项目，问题解决。
+
+![file_struture](http://f.cl.ly/items/2w150J2G0f1V0I3H2609/file_struture.png)
+![target_member](http://f.cl.ly/items/112j1x252u1U0S1J2a0E/target_member.png)
 
 2.在ng-cordova注册的插件
+目前还没有在ng-cordova上传并成功注册过插件，在这里先挖个坑，往后的日子再填。
 
 
-
-
+(完)
 
