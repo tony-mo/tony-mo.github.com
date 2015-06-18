@@ -576,5 +576,8 @@ CLI会输出这些信息
 目前还没有在ng-cordova上传并成功注册过插件，在这里先挖个坑，往后的日子再填。
 
 
+安卓平台下编写cordova插件
+[Cordova 开发属于自己的插件（plugin）](http://wenzhixin.net.cn/2014/03/20/cordova_my_plugin)
+
 (完)
 
