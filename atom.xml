@@ -4,7 +4,7 @@
   <title><![CDATA[Tony.Mo]]></title>
   <link href="http://tony-mo.github.io/atom.xml" rel="self"/>
   <link href="http://tony-mo.github.io/"/>
-  <updated>2015-06-18T22:51:05+08:00</updated>
+  <updated>2015-06-21T23:33:29+08:00</updated>
   <id>http://tony-mo.github.io/</id>
   <author>
     <name><![CDATA[Tony.Mo]]></name>
@@ -12,6 +12,21 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[C程序设计语言读书笔记:变量与算术表达式]]></title>
+    <link href="http://tony-mo.github.io/blog/2015/06/21/ccheng-xu-she-ji-yu-yan-du-shu-bi-ji-bian-liang-yu-suan-zhu-biao-da-shi/"/>
+    <updated>2015-06-21T23:23:34+08:00</updated>
+    <id>http://tony-mo.github.io/blog/2015/06/21/ccheng-xu-she-ji-yu-yan-du-shu-bi-ji-bian-liang-yu-suan-zhu-biao-da-shi</id>
+    <content type="html"><![CDATA[<p>C语言作为大学软件工程专业入门的第一门编程语言，我其实早就还给老师。从今天开始，重新温习一下，并记下一些非常基础的读书笔记，勉励自己。</p>
+
+<h3>1.输出格式问题</h3>
+
+<p>printf(&ldquo; %3d %6d&rdquo;,fahr, celsius);</p>
+
+<p>打印fahr与celsius的值，fahr的值占3个数字宽，celsius的值占6个数字宽。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[让Octopress博客在多台Mac上同时使用]]></title>
@@ -49,25 +64,7 @@
     <link href="http://tony-mo.github.io/blog/2015/06/08/cordova-plugin/"/>
     <updated>2015-06-08T15:20:20+08:00</updated>
     <id>http://tony-mo.github.io/blog/2015/06/08/cordova-plugin</id>
-    <content type="html"><![CDATA[<blockquote><p>Cordova提供的功能能够满足一般应用，但是对于复杂的应用或者对性能要求比较严格的应用来说，并不是很理想的。所以就需要在某些场景下自己写代码来弥补这些不足，Cordova也提供了Plugin功能。Cordova本身访问Native接口都是通过Plugin的方式提供的，可以参考官方Plugin代码，而且GitHub上也存在不少开源的Cordova Plugin，所以这些都是最好的教程。</p>
-
-<p>Plugin的分类大概有两种：</p>
-
-<p>JavaScript-only Plugin：不需要写Native代码，不依赖平台的共通的JS代码</p>
-
-<p>Native Plugin：弥补Cordova提供的功能以外的Native调用，依赖各个平台写不同的Native代码</p></blockquote>
-
-<p>引言出自<a href="http://rensanning.iteye.com/blog/2029362">Fish Where The Fish Are</a></p>
-
-<p>文章这里只介绍Native Plugin在iOS平台下的编写。日后或许再添加JavaScript-only Plugin以及安卓平台下的插件编写:)</p>
-
-<hr />
-
-<h3>如何在iOS平台下编写Cordova插件</h3>
-
-<p>(文章末尾有提供安卓平台下编写Cordova插件连接)</p>
-
-<p><em>由于文章篇幅有点长，所以建议大家可以参考插件的文件目录结构以及各文件内容，边看边拷贝文件内容，快速编写一个插件demo出来，首先有个大概的了解。毕竟纸上得来终觉浅，看完了不写，相当于没看。在2.各文件内容以及作用里面，会详细介绍配置文件以及各元素的作用。</em></p>
+    <content type="html"><![CDATA[<p><em>由于文章篇幅有点长，所以建议大家可以参考插件的文件目录结构以及各文件内容，边看边拷贝文件内容，快速编写一个插件demo出来，首先有个大概的了解。毕竟纸上得来终觉浅，看完了不写，相当于没看。在2.各文件内容以及作用里面，会详细介绍配置文件以及各元素的作用。(文章末尾有提供安卓平台下编写Cordova插件连接)</em></p>
 
 <h4>1.<a name="file_structure">插件的文件目录结</a></h4>
 
