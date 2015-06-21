@@ -2,29 +2,12 @@
 layout: post
 title: "iOS平台编写Cordova插件"
 date: 2015-06-08 15:20:20 +0800
+description: "iOS平台编写Cordova插件" 
 comments: true
 categories:  
 ---
 
-
-> Cordova提供的功能能够满足一般应用，但是对于复杂的应用或者对性能要求比较严格的应用来说，并不是很理想的。所以就需要在某些场景下自己写代码来弥补这些不足，Cordova也提供了Plugin功能。Cordova本身访问Native接口都是通过Plugin的方式提供的，可以参考官方Plugin代码，而且GitHub上也存在不少开源的Cordova Plugin，所以这些都是最好的教程。
-
-> Plugin的分类大概有两种：
- 
->JavaScript-only Plugin：不需要写Native代码，不依赖平台的共通的JS代码
-
->Native Plugin：弥补Cordova提供的功能以外的Native调用，依赖各个平台写不同的Native代码
-
-引言出自[Fish Where The Fish Are](http://rensanning.iteye.com/blog/2029362)
-
-文章这里只介绍Native Plugin在iOS平台下的编写。日后或许再添加JavaScript-only Plugin以及安卓平台下的插件编写:)
-
-***
-
-###如何在iOS平台下编写Cordova插件
-(文章末尾有提供安卓平台下编写Cordova插件连接)
-
-*由于文章篇幅有点长，所以建议大家可以参考插件的文件目录结构以及各文件内容，边看边拷贝文件内容，快速编写一个插件demo出来，首先有个大概的了解。毕竟纸上得来终觉浅，看完了不写，相当于没看。在2.各文件内容以及作用里面，会详细介绍配置文件以及各元素的作用。*
+*由于文章篇幅有点长，所以建议大家可以参考插件的文件目录结构以及各文件内容，边看边拷贝文件内容，快速编写一个插件demo出来，首先有个大概的了解。毕竟纸上得来终觉浅，看完了不写，相当于没看。在2.各文件内容以及作用里面，会详细介绍配置文件以及各元素的作用。(文章末尾有提供安卓平台下编写Cordova插件连接)*
 
 
 
@@ -49,7 +32,6 @@ categories:
 	│       └── CDVLogoutPlugin.m
 	└── www
 	    └── logoutplugin.js
-	
 ####2.各文件内容以及作用
 
 #####README.md文件
