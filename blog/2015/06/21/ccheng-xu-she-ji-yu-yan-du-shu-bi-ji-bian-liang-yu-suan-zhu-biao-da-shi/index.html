@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>C程序设计语言读书笔记:变量与算术表达式 - Tony.Mo</title>
+  <title>C程序设计语言读书笔记:导言 - Tony.Mo</title>
   <meta name="author" content="Tony.Mo">
 
   
-  <meta name="description" content="C语言作为大学软件工程专业入门的第一门编程语言，我其实早就还给老师。从今天开始，重新温习一下，并记下一些非常基础的读书笔记，勉励自己。 1.输出格式问题 printf(&ldquo; %3d %6d&rdquo;,fahr, celsius); 打印fahr与celsius的值， &hellip;">
+  <meta name="description" content="C语言作为大学软件工程专业入门的第一门编程语言，我其实早就还给老师。从今天开始，重新温习一下，并记下一些非常基础的读书笔记，勉励自己。 iOS程序设计(原书第2版) 这书不错。 1.输出格式问题 printf(&ldquo; %3d %6d&rdquo;,fahr, celsius); &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -70,7 +70,7 @@
   
   <header>
     
-      <h1 class="entry-title">C程序设计语言读书笔记:变量与算术表达式</h1>
+      <h1 class="entry-title">C程序设计语言读书笔记:导言</h1>
     
     
       <p class="meta">
@@ -91,11 +91,37 @@
 
 <div class="entry-content"><p>C语言作为大学软件工程专业入门的第一门编程语言，我其实早就还给老师。从今天开始，重新温习一下，并记下一些非常基础的读书笔记，勉励自己。</p>
 
+<p>iOS程序设计(原书第2版) 这书不错。</p>
+
 <h3>1.输出格式问题</h3>
 
 <p>printf(&ldquo; %3d %6d&rdquo;,fahr, celsius);</p>
 
 <p>打印fahr与celsius的值，fahr的值占3个数字宽，celsius的值占6个数字宽。</p>
+
+<pre><code>%d      按照十进制整型数打印
+%6d     按照十进制整型数打印，至少6个字符宽
+%f      按照浮点数打印
+%6f     按照浮点数打印，至少6个字符宽
+%.2f    按照浮点数打印，小数点后有两位小数
+%6.2f   按照浮点数打印，至少6个字符宽，小数点后有两位小数
+</code></pre>
+
+<p>printf函数还支持下列格式说明:</p>
+
+<pre><code>%o表示八进制数
+%x表示十六进制数
+%c表示字符
+%s表示字符串
+%%表示百分号（%）本身
+%u表示无符号字符类型
+%lu表示无符号长整形类型
+</code></pre>
+
+<h3>2.符号常量</h3>
+
+<pre><code>#define指令行的末尾没有分号。
+</code></pre>
 </div>
 
 
@@ -142,6 +168,8 @@
         <a class="basic-alignment left" href="/blog/2015/06/16/use-octopress-in-mutil-pc/" title="Previous Post: 让Octopress博客在多台Mac上同时使用">&laquo; 让Octopress博客在多台Mac上同时使用</a>
       
       
+        <a class="basic-alignment right" href="/blog/2015/07/08/lei-xing-,yun-suan-fu/" title="Next Post: 类型，运算符">类型，运算符 &raquo;</a>
+      
     </p>
   </footer>
 </article>
@@ -161,7 +189,11 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2015/06/21/ccheng-xu-she-ji-yu-yan-du-shu-bi-ji-bian-liang-yu-suan-zhu-biao-da-shi/">C程序设计语言读书笔记:变量与算术表达式</a>
+        <a href="/blog/2015/07/08/lei-xing-,yun-suan-fu/">类型，运算符</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/06/21/ccheng-xu-she-ji-yu-yan-du-shu-bi-ji-bian-liang-yu-suan-zhu-biao-da-shi/">C程序设计语言读书笔记:导言</a>
       </li>
     
       <li class="post">
